@@ -22,7 +22,7 @@ let persons = [
         "name": "Mary Poppendieck",
         "number": "39-23-6423122",
         "id": 4
-    }
+    },   
 ]
 
 app.get('/api/persons', (request, response) => {
@@ -31,21 +31,21 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const person = persons.find(p => p.id == id)
-    console.log('toimi1');
-    console.log(person);
-    if (person) {
-        console.log('toimi2'); 
-        console.log(person);
-        response.json(person)
-    } else {
-       response.status(404).end() 
-    }
-    
+    const person = persons.find(p => p.id === id)
+    if (person) response.json(person)
+    response.status(404).end()
 })
 
 app.get('/info', (request, response) => {
     response.send(`<p>Phonebook has ${persons.length} people </p>` + new Date().toString())
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    console.log(persons)
+    persons = persons.filter(p => p.id !== id)
+    console.log(persons)
+    response.status(204).end()
 })
 
 const PORT = 3001
