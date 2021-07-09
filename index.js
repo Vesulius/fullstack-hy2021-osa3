@@ -1,8 +1,11 @@
 const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 morgan.token('request-content', function (request, response) {
@@ -42,7 +45,9 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(p => p.id === id)
+
     if (person) response.json(person)
+    
     response.status(404).end()
 })
 
@@ -73,6 +78,23 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(p => p.id !== id)
     response.status(204).end()
 })
+
+app.put('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const body = request.body
+
+    if (!body) return response.status(204).json({ error: 'missing content' })
+    if (!(body.name && body.number)) return response.status(204).json({ error: 'missing information' })
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: id
+    }
+
+    persons = persons.map(p => p.id !== id ? p : person)
+    response.json(person)
+}) 
 
 const PORT = 3001
 app.listen(PORT, () => {
