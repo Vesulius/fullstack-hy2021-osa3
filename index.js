@@ -17,39 +17,40 @@ morgan.token('request-content', function (request, response) {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :request-content'))
 
-let persons = [
-    {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": 1
-    },
-    {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
-    },
-    {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
-    },
-    {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
-    },   
-]
+// let persons = [
+//     {
+//         "name": "Arto Hellas",
+//         "number": "040-123456",
+//         "id": 1
+//     },
+//     {
+//         "name": "Ada Lovelace",
+//         "number": "39-44-5323523",
+//         "id": 2
+//     },
+//     {
+//         "name": "Dan Abramov",
+//         "number": "12-43-234345",
+//         "id": 3
+//     },
+//     {
+//         "name": "Mary Poppendieck",
+//         "number": "39-23-6423122",
+//         "id": 4
+//     },
+// ]
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(result => {
-      response.json(result)  
+        response.json(result)
     })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-        Person.findById(request.params.id).then(person => {
-        response.json(person)
-    })
+    Person.findById(request.params.id)
+        .then(person => {
+            response.json(person)
+        })
 })
 
 app.get('/info', (request, response) => {
@@ -59,9 +60,8 @@ app.get('/info', (request, response) => {
 app.post('/api/persons', (request, response) => {
     const body = request.body
 
-    if (!body) return response.status(400).json({error: 'missing content'})
-    if (!(body.name && body.number)) return response.status(400).json({error: 'missing information'})
-    if (persons.find(p => p.name === body.name)) return response.status(400).json({error: 'name must be unique'})
+    if (!body) return response.status(400).json({ error: 'missing content' })
+    if (!(body.name && body.number)) return response.status(400).json({ error: 'missing information' })
 
     const person = new Person({
         name: body.name,
@@ -74,9 +74,10 @@ app.post('/api/persons', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(p => p.id !== id)
-    response.status(204).end()
+    Person.findByIdAndRemove(request.params.id)
+        .then(result => {
+            response.status(204).end()
+        })
 })
 
 app.put('/api/persons/:id', (request, response) => {
@@ -94,7 +95,7 @@ app.put('/api/persons/:id', (request, response) => {
 
     persons = persons.map(p => p.id !== id ? p : person)
     response.json(person)
-}) 
+})
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
