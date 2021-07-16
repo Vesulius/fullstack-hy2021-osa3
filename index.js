@@ -88,7 +88,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    const id = Number(request.params.id)
     const body = request.body
 
     if (!body) return response.status(204).json({ error: 'missing content' })
@@ -97,11 +96,14 @@ app.put('/api/persons/:id', (request, response, next) => {
     const person = {
         name: body.name,
         number: body.number,
-        id: id
     }
 
-    persons = persons.map(p => p.id !== id ? p : person)
-    response.json(person)
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+        .then(updatedPerson => {
+            console.log(updatedPerson);
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
