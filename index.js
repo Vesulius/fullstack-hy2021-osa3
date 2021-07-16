@@ -57,8 +57,13 @@ app.get('/api/persons/:id', (request, response, next) => {
         .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-    response.send(`<p>Phonebook has ${persons.length} people </p>` + new Date().toString())
+app.get('/info', (request, response, next) => {
+    Person.count()
+        .then(count => {
+            response.send(`<p>Phonebook has ${count} ${count > 1 ? 'people' : 'person'} people </p>` + new Date().toString())
+        })
+        .catch(error => next(error))
+
 })
 
 app.post('/api/persons', (request, response, next) => {
