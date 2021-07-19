@@ -1,1 +1,1 @@
-Sovelluksen osoite: https://murmuring-chamber-45536.herokuapp.com/api/persons
+Sovelluksen osoite: https://murmuring-chamber-45536.herokuapp.com
